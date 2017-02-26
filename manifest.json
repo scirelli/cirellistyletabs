@@ -1,0 +1,56 @@
+{
+    "name":"Cirelli Style Tabs",
+    "version": "0.001",
+    "description": "Tree style tabs for Chrome.",
+    "manifest_version": 2,
+    "minimum_chrome_version": "29",
+
+    "background": { 
+        "scripts": [
+            "js/lib/jquery-3.1.1.min.js",
+            "js/lib/q.js",
+            "js/lib/md5.js",
+            "js/lib/extras-string.js",
+            "js/lib/xhrWithAuth.js",
+            "background.js"
+        ],
+        "persistent":false
+    },
+
+    "page_action" :{
+        "default_icon" : "icon-128.png",
+        "default_title" : "Tabs",
+        "default_popup":"tabs_popup.html"
+    },
+
+    "icons" : {
+        "24" : "icon-24.png",
+        "32" : "icon-32.png",
+        "48" : "icon-48.png",
+        "128" : "icon-128.png"
+    },
+
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.cirelli.org",
+                "*://*.scirelli.com"
+            ],
+            "js": [
+                "js/lib/q.js",
+                "js/lib/md5.js",
+                "js/lib/extras-string.js",
+                "js/lib/jquery-3.1.1.min.js",
+                "js/contentscript/main.js"
+            ],
+            "css":[
+            ]
+        }
+    ],
+    "permissions" : [
+        "tabs",
+        "*://*.cirelli.org",
+        "*://*.scirelli.com",
+         "identity"
+    ]
+}
