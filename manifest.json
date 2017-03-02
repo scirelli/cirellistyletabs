@@ -7,11 +7,6 @@
 
     "background": { 
         "scripts": [
-            "js/lib/jquery-3.1.1.min.js",
-            "js/lib/q.js",
-            "js/lib/md5.js",
-            "js/lib/extras-string.js",
-            "js/lib/xhrWithAuth.js",
             "background.js"
         ],
         "persistent":false
@@ -33,14 +28,17 @@
     "content_scripts": [
         {
             "matches": [
-                "*://*.cirelli.org",
-                "*://*.scirelli.com"
+                "<all_urls>"
             ],
             "js": [
-                "js/lib/q.js",
-                "js/lib/md5.js",
+                "js/vendor/q.js",
+                "js/vendor/md5.js",
+                "js/vendor/jquery-3.1.1.min.js",
                 "js/lib/extras-string.js",
-                "js/lib/jquery-3.1.1.min.js",
+                "js/lib/extras-dom.js",
+                "js/lib/Node.js",
+                "js/lib/WindowNode.js",
+                "js/lib/TabNode.js",
                 "js/contentscript/main.js"
             ],
             "css":[
@@ -49,8 +47,8 @@
     ],
     "permissions" : [
         "tabs",
-        "*://*.cirelli.org",
-        "*://*.scirelli.com",
+        "storage",
+        "<all_urls>",
          "identity"
     ]
 }
