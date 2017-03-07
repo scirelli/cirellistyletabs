@@ -11,7 +11,6 @@
             }
 
             li{
-                text-align: center;
                 margin:2px 0px 2px 0px;
             }
 
@@ -24,9 +23,10 @@
                 width:100%;
                 display:inline-flex;
                 flex-direction:row;
+                border-radius:4px;
             }
             
-            li > div > button{
+            li > div > button.btn{
                 background-color:transparent;
             }
 
@@ -44,6 +44,14 @@
 
             .btn-middle, .btn-right{
                 border-left:none;
+            }
+
+            .btn-middle{
+                text-align: left;
+            }
+
+            .btn{
+                padding:3px 9px;
             }
         </style>
         
