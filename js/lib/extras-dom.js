@@ -5,7 +5,7 @@ if(!Element.prototype.traverse){
         for(var i=0, l=node.children.length,child; i<l; i++) {
             child = node.children[i];
             callBack(child);
-            traverse(child);
+            child.traverse(callBack);
         }
     };
 }
@@ -15,7 +15,7 @@ if(!Element.prototype.iterator){
         var queue = [this];
         
         return {
-            next:next(){
+            next:function next(){
                 var node = queue.shift();
                 
                 if(node && node.children && node.children.length){
@@ -30,7 +30,7 @@ if(!Element.prototype.iterator){
                 return node;
             },
 
-            hasNext:function(){
+            hasNext:function hasNext(){
                 return queue.length ? true : false;
             }
         };

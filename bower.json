@@ -1,0 +1,28 @@
+{
+  "name": "Cirelli Style Tabs",
+  "homepage": "https://github.com/scirelli/cirellistyletabs",
+  "authors": [
+    "scirelli@gmail.com"
+  ],
+  "description": "Attempt at making tree style tabs for Chrome.",
+  "main": "background.js",
+  "moduleType": [],
+  "keywords": [
+    "Tabs",
+    "Tree",
+    "style"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~3.1.1",
+    "bootstrap": "^3.3.7",
+    "q": "#1.4.1"
+  }
+}

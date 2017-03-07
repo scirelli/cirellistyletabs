@@ -1,13 +1,11 @@
 var cirelli = cirelli || {};
 
-cirelli.Node = (function() {
-    function Node(title, id, isWindow){
+cirelli.Node = class Node {
+    constructor(title, id, isWindow){
         this.title = title || '';
         this.id = id || null;
         this.isWindow = isWindow || false;
-        this.child = [];
+        this.children = [];
         this.parent = null;
     }
-
-    return Node;
-})();
+}

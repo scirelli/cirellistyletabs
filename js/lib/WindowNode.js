@@ -1,8 +1,7 @@
-var cirelli = cirelli || {};
+var cirelli = cirelli || {Node:{}};
 
-cirelli.WindowNode = (function(Node) {
-    function WindowNode(title, id) {
-        Node.call(this, title, id, true);
+cirelli.WindowNode = class WindowNode extends cirelli.Node {
+    constructor(title, id){
+        super(title, id, true);
     }
-    WindowNode.prototype = new Node();
-})(cirelli.Node);
+}

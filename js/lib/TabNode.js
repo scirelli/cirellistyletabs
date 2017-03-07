@@ -1,10 +1,7 @@
-var cirelli = cirelli || {};
+var cirelli = cirelli || {Node:{}};
 
-cirelli.TabNode = (function(Node) {
-    function TabNode(title, id){
-        Node.call(this, title, id, true);
+cirelli.TabNode = class TabNode extends cirelli.Node {
+    constructor(title, id){
+        super(title, id, false);
     }
-    TabNode.prototype = new Node();
-    
-    return TabNode;
-})(cirelli.Node);
+}
