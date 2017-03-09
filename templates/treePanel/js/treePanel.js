@@ -10,10 +10,6 @@
                 padding-left:15px;
             }
 
-            li{
-                margin:2px 0px 2px 0px;
-            }
-
             button#add{
                 text-align: center;
                 width:100%;
@@ -35,7 +31,9 @@
             }
 
             .list-group-item{
-                border:none;
+                border-style-position:inside;
+                border:3px solid transparent;
+                margin:1px 0px 1px 0px;
                 padding:0;
             }
             .btn-left, .btn-middle{
@@ -48,10 +46,44 @@
 
             .btn-middle{
                 text-align: left;
+                overflow:hidden;
             }
 
             .btn{
                 padding:3px 9px;
+            }
+
+            ul.children-collapsed{
+                display:none;
+            }
+
+            ul.children-expanded{
+                display:block;
+            }
+
+            li.ghost{
+                border: 3px dashed;
+                border-radius: 4px;
+                padding: 2px;
+                border-color: #333;
+                background-color: #ddd;
+                content:"&nbsp;"
+            }
+
+            .tab-insert-before{
+                border-top:dotted black;    
+            }
+
+            .tab-insert-before-active{
+                border-top:dotted #80ff00;    
+            }
+
+            .tab-insert-after{
+                border-bottom:dotted black;    
+            }
+
+            .tab-insert-after-active{
+                border-bottom:dotted #80ff00;    
             }
         </style>
         
@@ -62,10 +94,10 @@
         </div>
 
         <template id="listItemTemplate">
-            <li class="list-group-item">
-                <div class="btn-group" role="group" aria-label="...">
+            <li class="list-group-item" draggable="true">
+                <div class="btn-group" role="group" aria-label="Tab controls">
                     <button type="button" class="btn btn-default btn-left" aria-label="Expand">
-                        <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
                     </button>
 
                     <button type="button" class="btn btn-default title-btn btn-middle" aria-label="Open">
@@ -77,8 +109,11 @@
                         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                     </button>
                 </div>
-                <ul></ul>
+                <ul class="children-collapsed"></ul>
             </li>
+        </template>
+        <template id="listItemGhostTemplate">
+            <li class="list-group-item ghost"></li>
         </template>`;
  
     customElements.define('cirelli-style-tabs', class CirelliStyleTabs extends HTMLElement {
@@ -101,7 +136,7 @@
                     treePanelNode.title = 'New tab';
                 }
 
-                this.model.children.push(treePanelNode);
+                this.tabModel.children.push(treePanelNode);
                 addTabToMainList.apply(this, arguments);
             }
 
@@ -120,8 +155,8 @@
 
     function init(){
         createShadowRoot.call(this);
-        attachEventHandlers.call(this);
-        this.model = {title:'', children:[]};
+        attachAddEventHandler.call(this);
+        this.tabModel = {title:'', children:[]};
     }
     
     function createShadowRoot() {
@@ -131,7 +166,7 @@
         return shadowRoot;
     }
     
-    function attachEventHandlers() {
+    function attachAddEventHandler() {
         this.shadowRoot.querySelector('button#add').addEventListener('click', function(eventObject) {
             this.dispatchEvent(new Event('add-tab', {bubbles: true, composed: true}));
         });
@@ -155,16 +190,72 @@
         
         return parentNode;
     }
-
+    
     function createTab(node){
-       var template = this.shadowRoot.querySelector('#listItemTemplate'),
-           clone =  template.content.cloneNode(true);
+        return initClonedTab.call(this, node, createTabFromTemplate.call(this));
+    }
 
+    function createTabFromTemplate(){
+       return this.shadowRoot.querySelector('#listItemTemplate').content.cloneNode(true);
+    }
+    
+    function initClonedTab(node, clone){
         clone.querySelector('span.title-content').innerHTML = node.title;
-        clone.node = node;
+        clone.querySelector('li').dataNode = node;
+
+        attachCloneEventHandlers.call(this, node, clone);
 
         return clone;
     }
+
+    function attachCloneEventHandlers(node, clone){
+        let leftBtn = clone.querySelector('button.btn-left'),
+            leftBtnIcon = leftBtn.querySelector('span'),
+            middleBtn = clone.querySelector('button.btn-middle'),
+            rightBtn = clone.querySelector('button.btn-right'),
+            liContainer = clone.querySelector('li'),
+            ul = clone.querySelector('ul'),
+            self = this;
+
+        if(leftBtn){
+            leftBtn.addEventListener('click', function(){
+                toggleListExpanded(ul, leftBtnIcon);
+            });
+        }
+
+        if(rightBtn){
+            rightBtn.addEventListener('click', function(e) {
+                this.dispatchEvent(new Event('remove-tab', {bubbles: true, composed: true, tabNode:node}));
+                liContainer.remove();
+            });
+        }
+
+        if(middleBtn){
+            middleBtn.addEventListener('click', function() {
+                this.dispatchEvent(new Event('clicked-tab', {bubbles: true, composed: true, tabNode:node}));
+            });
+        }
+        
+        if(liContainer){
+            liContainer.tpDragable = new cirelli.TreePanelDragable(liContainer, self);
+        }
+    }
+    
+    function toggleListExpanded(ul, toggleIcon) {
+        if(ul.classList.contains('children-collapsed')){
+            ul.classList.remove('children-collapsed');
+            ul.classList.add('children-expanded');
+            toggleIcon.classList.remove('glyphicon-chevron-right');
+            toggleIcon.classList.add('glyphicon-chevron-down');
+        }else if(ul.classList.contains('children-expanded')){
+            ul.classList.remove('children-expanded');
+            ul.classList.add('children-collapsed');
+            toggleIcon.classList.remove('glyphicon-chevron-down');
+            toggleIcon.classList.add('glyphicon-chevron-right');
+        }else{
+            console.error(new Error('CSS classes not found.'));
+        }
+    };
 
     function addTabToMainList(treePanelNode) {
         this.shadowRoot

@@ -35,14 +35,12 @@
                 "bower_components/q/q.js",
                 "bower_components/jquery/dist/jquery.min.js",
                 "js/vendor/md5.js",
-                "js/lib/extras-string.js",
-                "js/lib/extras-dom.js",
-                "js/lib/Node.js",
-                "js/lib/WindowNode.js",
-                "js/lib/TabNode.js",
+                "js/lib/*.js",
+                "templates/treePanel/js/*.js",
                 "js/contentscript/main.js"
             ],
             "css":[
+                "bower_components/bootstrap/dist/css/bootstrap.min.css"
             ]
         }
     ],
