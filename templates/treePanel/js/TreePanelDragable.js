@@ -51,9 +51,17 @@ var cirelli = cirelli || {};
                     evObj;
 
                 return function debouncedDragOver(ev){
+                    ev.preventDefault();
+
+                    evObj = {
+                        target:ev.target,
+                        x:ev.x,
+                        y:ev.y
+                    };
+
                     if(!timeoutId){
                         timeoutId = setTimeout(function(){
-                            self.onDragOver(ev);
+                            self.onDragOver(evObj);
                             timeoutId = 0;
                         }, 100);
                     }
@@ -90,7 +98,6 @@ var cirelli = cirelli || {};
         }
 
         onDragOver(ev){
-            ev.preventDefault();
             this.setState(DRAG_OVER);
             console.log('over');
 
@@ -204,13 +211,13 @@ var cirelli = cirelli || {};
                 midY = rect.bottom - (rect.height/2);
 
             if(isLowerLeft(x, y, midX, midY)){
-                //console.debug('lower left');
+                // console.debug('lower left');
                 return AFTER_END;
             }else if(isLowerRight(x, y, midX, midY)){
-                //console.debug('lower right');
+                // console.debug('lower right');
                 return AFTER_BEGIN;
             }else{
-                //console.debug('top');
+                // console.debug('top');
                 return BEFORE_BEGIN;
             }
 
