@@ -21,6 +21,7 @@ var cirelli = cirelli || {};
             this.registerEventListeners();
             this.dragState = NONE;
             this.parentElement = parentElement;
+            this.dragOverTimeoutId = 0;
         }
 
         registerEventListeners(){
@@ -47,8 +48,7 @@ var cirelli = cirelli || {};
             });
 
             this.element.addEventListener('dragover', (function debouncedDragOverFactory(){
-                let timeoutId = 0,
-                    evObj;
+                let evObj;
 
                 return function debouncedDragOver(ev){
                     ev.preventDefault();
@@ -59,10 +59,10 @@ var cirelli = cirelli || {};
                         y:ev.y
                     };
 
-                    if(!timeoutId){
-                        timeoutId = setTimeout(function(){
+                    if(!self.dragOverTimeoutId){
+                        self.dragOverTimeoutId = setTimeout(function(){
                             self.onDragOver(evObj);
-                            timeoutId = 0;
+                            self.dragOverTimeoutId = 0;
                         }, 100);
                     }
                 };
@@ -79,6 +79,7 @@ var cirelli = cirelli || {};
         }
         onDragExit(ev){
             ev.preventDefault();
+            this.stopDragOverTimeout();
             this.setState(DRAG_EXIT);
         }
 
@@ -93,13 +94,13 @@ var cirelli = cirelli || {};
         }
         onDragEnd(ev){
             ev.preventDefault();
+            this.stopDragOverTimeout();
             this.setState(DRAG_END);
             this.removeAllGhosts();
         }
 
         onDragOver(ev){
             this.setState(DRAG_OVER);
-            console.log('over');
 
             let li = ev.target,
                 div;
@@ -142,6 +143,7 @@ var cirelli = cirelli || {};
         }
         onDragLeave(ev){
             ev.preventDefault();
+            this.stopDragOverTimeout();
             let li = ev.target;
 
             this.setState(DRAG_LEAVE);
@@ -150,6 +152,8 @@ var cirelli = cirelli || {};
         
         onDrop(ev){
             ev.preventDefault();
+            this.stopDragOverTimeout();
+
             let dropTarget = ev.target,
                 dropTargetChildren,
                 div,
@@ -268,6 +272,11 @@ var cirelli = cirelli || {};
         
         state(){
             return this.dragState;
+        }
+
+        stopDragOverTimeout(){
+            clearTimeout(this.dragOverTimeoutId);
+            this.dragOverTimeoutId = 0;
         }
     };
 })();
