@@ -30,5 +30,51 @@
         <script src="templates/treePanel/js/TreePanelNode.js"></script>
         <script src="templates/treePanel/js/TreePanelDragable.js"></script>
         <script src="templates/treePanel/js/treePanel.js"></script>
+        <script>
+            var c = document.querySelector('cirelli-style-tabs'),
+                count = 0;
+            c.addEventListener('add-tab', function(e){
+                this.addTab(newNode());
+            });
+
+            function newNode(){
+                return new cirelli.TreePanelNode('Steve' + count++);
+            }
+
+            if(1){
+                c.addTab(
+                    newNode()
+                    .add(newNode())
+                    .add(newNode())
+                    .add(newNode()
+                        .add(newNode())
+                        .add(newNode()
+                            .add(newNode())
+                            .add(newNode()
+                                .add(newNode()
+                                    .add(newNode())
+                                    .add(newNode())
+                                    .add(newNode()
+                                        .add(newNode())
+                                        .add(newNode())
+                                        .add(newNode())
+                                        .add(newNode())
+                                        .add(newNode())
+                                        .add(newNode())
+                                        .add(newNode())
+                                        .add(newNode())
+                                    )
+                                )
+                            )
+                        )
+                    )
+                );
+            }else{
+                c.addTab((newNode())
+                    .add(newNode())
+                    .add(newNode())
+                    .add(newNode()));
+            }
+        </script>
     </body>
 </html>

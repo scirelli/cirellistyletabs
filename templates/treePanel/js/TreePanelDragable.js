@@ -26,141 +26,151 @@ var cirelli = cirelli || {};
         registerEventListeners(){
             let self = this;
 
-            this.element.addEventListener('dragenter', function dragEnter(ev) {
+            this.element.addEventListener('dragenter', function dragEnter(ev){
                 self.onDragEnter(ev);
             });
 
-            this.element.addEventListener('dragexit', function dragExit(ev) {
+            this.element.addEventListener('dragexit', function dragExit(ev){
                 self.onDragExit(ev);
             });
 
-            this.element.addEventListener('dragstart', function dragStart(ev) {
+            this.element.addEventListener('dragstart', function dragStart(ev){
                 self.onDragStart(ev);
             });
 
-            this.element.addEventListener('dragend', function dragEnd(ev) {
+            this.element.addEventListener('dragend', function dragEnd(ev){
                 self.onDragEnd(ev);
             });
             
-            this.element.addEventListener('dragleave', function dragLeave(ev) {
+            this.element.addEventListener('dragleave', function dragLeave(ev){
                 self.onDragLeave(ev);
             });
 
-            this.element.addEventListener('dragover', function dragOver(ev) {
-                self.onDragOver(ev);
-            });
+            this.element.addEventListener('dragover', (function debouncedDragOverFactory(){
+                let timeoutId = 0,
+                    evObj;
 
-            this.element.addEventListener('drop', function dragOver(ev) {
+                return function debouncedDragOver(ev){
+                    if(!timeoutId){
+                        timeoutId = setTimeout(function(){
+                            self.onDragOver(ev);
+                            timeoutId = 0;
+                        }, 100);
+                    }
+                };
+            })());
+
+            this.element.addEventListener('drop', function dragOver(ev){
                 self.onDrop(ev);
             });
         }
 
         onDragEnter(ev){
             ev.preventDefault();
-            let li = ev.target,
-                txt = '';
-            
-            if(li.nodeName !== 'LI'){
-                li = this.firstParentNodeByName(li, 'LI');
-            }
-            if(ev.target.querySelector('.title-content')){
-                txt = ev.target.querySelector('.title-content').innerHTML;
-            }
-
             this.setState(DRAG_ENTER);
-            console.log('Drag enter.' + txt);
         }
         onDragExit(ev){
             ev.preventDefault();
-            let li = ev.target,
-                txt = '';
-
-            if(ev.target.querySelector('.title-content')){
-                txt = ev.target.querySelector('.title-content').innerHTML;
-            }
-
-            console.log('Drag enter.' + txt);
             this.setState(DRAG_EXIT);
         }
 
         onDragStart(ev){
             //ev.preventDefault(); //Stops the drag from happening.
-            let li = ev.target,
-                txt = '';
+            let li = ev.target;
 
             ev.dataTransfer.dropEffect = "move";
             this.setState(DRAG_START);
             
             this.markAsElementBeingDragged(li);
-            if(li.querySelector('.title-content')){
-                txt = li.querySelector('.title-content').innerHTML;
-            }
-            console.log('Drag started on' + txt + '\n\t' + li);
         }
         onDragEnd(ev){
             ev.preventDefault();
-            let txt = '';
-            
             this.setState(DRAG_END);
-            if(ev.target.querySelector('.title-content')){
-                txt = ev.target.querySelector('.title-content').innerHTML;
-            }
-            console.log('Drag end.' + txt);
             this.removeAllGhosts();
         }
 
         onDragOver(ev){
             ev.preventDefault();
+            this.setState(DRAG_OVER);
+            console.log('over');
 
-            let li = ev.target;
+            let li = ev.target,
+                div;
 
             if(li.nodeName !== 'LI'){
                 li = this.firstParentNodeByName(li, 'LI');
+                if(li.nodeName !== 'LI') return;
+            }
+            div = li.querySelector('div.btn-group');
+            if(!div){
+                div = li;
             }
 
-            if(this.determineInsertLocation(ev.y, li.getBoundingClientRect()) === AFTER_END){
-                if(!li.classList.contains('tab-insert-after-active')){
+            switch(this.determineInsertLocation(ev.x, ev.y, div.getBoundingClientRect())){
+                case AFTER_END:
+                    this.removeAllGhosts();
                     li.classList.add('tab-insert-after-active');
-                }
-                li.classList.remove('tab-insert-before-active');
-            }else{
-                if(!li.classList.contains('tab-insert-before-active')){
+                    break;
+                case AFTER_BEGIN:
+                    this.removeAllGhosts();
+                    li.querySelectorAll(':scope > div > button.btn-middle,:scope > div > button.btn-right').forEach(function(el){
+                        el.classList.add('tab-insert-after-as-child-active');
+                    });
+
+                    let leftBtn = li.querySelector('button.btn-left'),
+                        toggleIcon = leftBtn.querySelector('span'),
+                        ul = li.querySelector('ul');
+                    
+                    if(ul.classList.contains('children-collapsed')){
+                        ul.classList.remove('children-collapsed');
+                        ul.classList.add('children-expanded');
+                        toggleIcon.classList.remove('glyphicon-chevron-right');
+                        toggleIcon.classList.add('glyphicon-chevron-down');
+                    }
+                    break;
+                default:
+                    this.removeAllGhosts();
                     li.classList.add('tab-insert-before-active');
-                }
-                li.classList.remove('tab-insert-after-active');
             }
-            console.log( '(' + ev.x + ', ' + ev.y + ')');
-            this.setState(DRAG_OVER);
         }
         onDragLeave(ev){
             ev.preventDefault();
-            let li = ev.target,
-                txt = '';
-
-            if(ev.target.querySelector('.title-content')){
-                txt = ev.target.querySelector('.title-content').innerHTML;
-            }
+            let li = ev.target;
 
             this.setState(DRAG_LEAVE);
             this.removeAllGhosts();
-            console.log('Drag leave.' + txt);
         }
         
         onDrop(ev){
             ev.preventDefault();
             let dropTarget = ev.target,
+                dropTargetChildren,
+                div,
                 self = this,
                 dragElements = this.parentElement.shadowRoot.querySelectorAll('.drag-item');
 
             if(dropTarget.nodeName !== 'LI'){
                 dropTarget = this.firstParentNodeByName(dropTarget, 'LI');
             }
+            div = dropTarget.querySelector('div.btn-group');
+            if(!div){
+                div = dropTarget;
+            }
+            dropTargetChildren = dropTarget.querySelector(':scope > ul');
 
             dragElements.forEach(function(el) {
-                dropTarget.insertAdjacentElement(self.determineInsertLocation(ev.y, dropTarget.getBoundingClientRect()), el);
+                switch(self.determineInsertLocation(ev.x, ev.y, div.getBoundingClientRect())){
+                case AFTER_END:
+                    dropTarget.insertAdjacentElement(AFTER_END, el);
+                    break;
+                case AFTER_BEGIN:
+                    dropTargetChildren.insertAdjacentElement(AFTER_BEGIN, el);
+                    break;
+                default:
+                    dropTarget.insertAdjacentElement(BEFORE_BEGIN, el);
+                }
             });
 
-            console.log(this.determineInsertLocation(ev.y, dropTarget.getBoundingClientRect()));
             cleanup();
 
             function cleanup() {
@@ -172,9 +182,10 @@ var cirelli = cirelli || {};
         }
 
         removeAllGhosts(){
-            this.parentElement.shadowRoot.querySelectorAll('li.tab-insert-before, li.tab-insert-after, li.tab-insert-before-active, li.tab-insert-after-active').forEach(function(el){
+            this.parentElement.shadowRoot.querySelectorAll('.tab-insert-before, .tab-insert-after, .tab-insert-before-active, .tab-insert-after-active, .tab-insert-after-as-child-active').forEach(function(el){
                 el.classList.remove('tab-insert-after');
                 el.classList.remove('tab-insert-after-active');
+                el.classList.remove('tab-insert-after-as-child-active');
                 el.classList.remove('tab-insert-before'); 
                 el.classList.remove('tab-insert-before-active'); 
             });
@@ -188,13 +199,33 @@ var cirelli = cirelli || {};
             li.classList.add('tab-insert-after');
         }
         
-        determineInsertLocation(y, rect){
-            let midY = rect.bottom - (rect.height/2);
+        determineInsertLocation(x, y, rect){
+            let midX = rect.right - (rect.width/2),
+                midY = rect.bottom - (rect.height/2);
 
-            if(y > midY){
+            if(isLowerLeft(x, y, midX, midY)){
+                //console.debug('lower left');
                 return AFTER_END;
+            }else if(isLowerRight(x, y, midX, midY)){
+                //console.debug('lower right');
+                return AFTER_BEGIN;
             }else{
+                //console.debug('top');
                 return BEFORE_BEGIN;
+            }
+
+            function isLowerLeft(x, y, midX, midY) {
+                return x < midX && y > midY; 
+            }
+            function isLowerRight(x, y, midX, midY) {
+                return x >= midX && y > midY; 
+            }
+
+            function isUpperLeft(x, y, midX, midY) {
+                return  x < midX && y <= midY; 
+            }
+            function isUpperRight(x, y, midX, midY) {
+                return  x >= midX && y <= midY; 
             }
         }
         
@@ -226,6 +257,10 @@ var cirelli = cirelli || {};
         setState(state){
             this.dragState = state;
             return this;
+        }
+        
+        state(){
+            return this.dragState;
         }
     };
 })();

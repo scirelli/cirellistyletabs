@@ -82,14 +82,13 @@
                 border-bottom:dotted black;    
             }
 
-            .tab-insert-after-active{
+            .tab-insert-after-active, .tab-insert-after-as-child-active{
                 border-bottom:dotted #80ff00;    
             }
         </style>
         
         <div>
-            <ul id="mainContainerTree" class="list-group">
-            </ul>
+            <ul id="mainContainerTree" class="list-group" style="margin-bottom:3px;"></ul>
             <button id="add" class="">+</button>
         </div>
 
@@ -243,19 +242,26 @@
     
     function toggleListExpanded(ul, toggleIcon) {
         if(ul.classList.contains('children-collapsed')){
-            ul.classList.remove('children-collapsed');
-            ul.classList.add('children-expanded');
-            toggleIcon.classList.remove('glyphicon-chevron-right');
-            toggleIcon.classList.add('glyphicon-chevron-down');
+            expandList(ul, toggleIcon);
         }else if(ul.classList.contains('children-expanded')){
-            ul.classList.remove('children-expanded');
-            ul.classList.add('children-collapsed');
-            toggleIcon.classList.remove('glyphicon-chevron-down');
-            toggleIcon.classList.add('glyphicon-chevron-right');
+            collapseList(ul, toggleIcon);
         }else{
             console.error(new Error('CSS classes not found.'));
         }
     };
+
+    function expandList(ul, toggleIcon){
+        ul.classList.remove('children-collapsed');
+        ul.classList.add('children-expanded');
+        toggleIcon.classList.remove('glyphicon-chevron-right');
+        toggleIcon.classList.add('glyphicon-chevron-down');
+    }
+    function collapseList(ul, toggleIcon) {
+        ul.classList.remove('children-expanded');
+        ul.classList.add('children-collapsed');
+        toggleIcon.classList.remove('glyphicon-chevron-down');
+        toggleIcon.classList.add('glyphicon-chevron-right');
+    }
 
     function addTabToMainList(treePanelNode) {
         this.shadowRoot
