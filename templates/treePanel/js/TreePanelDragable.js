@@ -71,6 +71,11 @@ var cirelli = cirelli || {};
             this.element.addEventListener('drop', function dragOver(ev){
                 self.onDrop(ev);
             });
+            // el.addEventListener("touchstart", handleStart, false);
+            //  el.addEventListener("touchend", handleEnd, false);
+            //  el.addEventListener("touchcancel", handleCancel, false);
+            //  el.addEventListener("touchleave", handleEnd, false);
+            //  el.addEventListener("touchmove", handleMove, false);
         }
 
         onDragEnter(ev){

@@ -32,11 +32,14 @@
                 "<all_urls>"
             ],
             "js": [
-                "bower_components/q/q.js",
-                "bower_components/jquery/dist/jquery.min.js",
-                "js/vendor/md5.js",
-                "js/lib/*.js",
-                "templates/treePanel/js/*.js",
+                "js/lib/extras-dom.js",
+                "js/lib/extras-string.js",
+                "js/lib/Node.js",
+                "js/lib/TabNode.js",
+                "js/lib/WindowNode.js",
+                "templates/treePanel/js/TreePanelNode.js",
+                "templates/treePanel/js/TreePanelDragable.js",
+                "templates/treePanel/js/treePanel.js",
                 "js/contentscript/main.js"
             ],
             "css":[

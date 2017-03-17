@@ -8,16 +8,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+        <style>
+            section.tabs-container:{
+                width:300px;
+            }
+        </style>
     </head>
     <body>
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
         <h2>Test Page</h2>
-        
-        <div style="width:300px">
-            <cirelli-style-tabs></cirelli-style-tabs>
-        </div>
+       
+        <section style="width:300px;">
+            <div class="cirelli-style-tabs"></div>
+        </section>
 
         <script src="bower_components/jquery/dist/jquery.min.js"></script>
         <script src="bower_components/q/q.js"></script>
@@ -31,8 +36,9 @@
         <script src="templates/treePanel/js/TreePanelDragable.js"></script>
         <script src="templates/treePanel/js/treePanel.js"></script>
         <script>
-            var c = document.querySelector('cirelli-style-tabs'),
+            var c = document.body.querySelector('.cirelli-style-tabs'),
                 count = 0;
+
             c.addEventListener('add-tab', function(e){
                 this.addTab(newNode());
             });

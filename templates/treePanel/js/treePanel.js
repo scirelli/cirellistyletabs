@@ -114,42 +114,38 @@
         <template id="listItemGhostTemplate">
             <li class="list-group-item ghost"></li>
         </template>`;
- 
-    customElements.define('cirelli-style-tabs', class CirelliStyleTabs extends HTMLElement {
-        constructor() {
-            super();
-            init.apply(this, arguments);
-        }
 
-        get model() {
-            return this.tabModel;
-        }
-        set model(m) {
-            this.tabModel = m;
-            drawTree.call(this);
-        }
-        
-        addTab(treePanelNode){
-            if(treePanelNode){
-                if(!treePanelNode.title){
-                    treePanelNode.title = 'New tab';
+    document.body.querySelectorAll('.cirelli-style-tabs').forEach(function(el){
+        let containerDiv = el;
+    
+        Object.defineProperties(containerDiv, {
+            model:{
+                get:function model() {
+                    return this.tabModel;
+                },
+                set:function model(m) {
+                    this.tabModel = m;
+                    drawTree.call(this);
+                },
+                enumerable:true
+            },
+
+            addTab:{
+                value:function (treePanelNode){
+                    if(treePanelNode){
+                        if(!treePanelNode.title){
+                            treePanelNode.title = 'New tab';
+                        }
+
+                        this.tabModel.children.push(treePanelNode);
+                        addTabToMainList.apply(this, arguments);
+                    }
+
+                    return this;
                 }
-
-                this.tabModel.children.push(treePanelNode);
-                addTabToMainList.apply(this, arguments);
             }
-
-            return this;
-        }
-
-        connectedCallback() {
-        }
-
-        disconnectedCallback() {
-        }
-
-        attributeChangedCallback(attrName, oldVal, newVal) {
-        }
+        });
+        init.apply(containerDiv);
     });
 
     function init(){
