@@ -29,7 +29,7 @@
         {
             "run_at":"document_end",
             "matches": [
-                "<all_urls>"
+                "*://cirellistyletabs.lan/*"
             ],
             "js": [
                 "js/lib/extras-dom.js",
@@ -40,22 +40,25 @@
                 "templates/treePanel/js/TreePanelNode.js",
                 "templates/treePanel/js/TreePanelDragable.js",
                 "templates/treePanel/js/treePanel.js",
+                "js/contentscript/tab.js",
                 "js/contentscript/main.js"
             ],
             "css":[
-                "bower_components/bootstrap/dist/css/bootstrap.min.css"
+                "bower_components/bootstrap/dist/css/bootstrap.min.css",
+                "css/cirelliStyleTabs.css"
             ]
         }
     ],
 
     "web_accessible_resources": [
-        "templates/*"
+        "templates/*",
+        "bower_components/bootstrap/*"
     ],
 
     "permissions" : [
         "tabs",
         "storage",
-        "<all_urls>",
+        "*://cirellistyletabs.lan/*",
          "identity"
     ]
 }

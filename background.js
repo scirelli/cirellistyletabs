@@ -22,7 +22,7 @@ chrome.runtime.onSuspend.addListener(function() {
 
 //Listen to messages from content scripts
 chrome.runtime.onMessage.addListener(function( oResponse, sender, sendResponse){
-    console.log('Scraped: ');
+    console.log('Test');
     console.log(oResponse);
 
     return true;

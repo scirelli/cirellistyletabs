@@ -65,6 +65,7 @@
         "*://*.aircraftclubs.com/*",
         "*://apis.google.com/*",
         "*://www.googleapis.com/*",
+        "<all_urls>",
          "identity"
     ],
     "content_security_policy": "script-src 'self' https://apis.google.com https://oauth.googleusercontent.com https://accounts.google.com https://ssl.gstatic.com https://www.googleapis.com; object-src 'self'"

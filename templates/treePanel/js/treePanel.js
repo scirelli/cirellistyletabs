@@ -1,4 +1,6 @@
-(function() {
+var cirelli = cirelli || {};
+
+cirelli.treePanelCreator = (function() {
     const MARKUP =`<style>
             @import "bower_components/bootstrap/dist/css/bootstrap.min.css";
             :host {
@@ -115,38 +117,48 @@
             <li class="list-group-item ghost"></li>
         </template>`;
 
-    document.body.querySelectorAll('.cirelli-style-tabs').forEach(function(el){
-        let containerDiv = el;
-    
-        Object.defineProperties(containerDiv, {
-            model:{
-                get:function model() {
-                    return this.tabModel;
-                },
-                set:function model(m) {
-                    this.tabModel = m;
-                    drawTree.call(this);
-                },
-                enumerable:true
-            },
+    function createTabElement(aContainerElements){
+        aContainerElements = aContainerElements || document.body.querySelectorAll('.cirelli-style-tabs') || [];
 
-            addTab:{
-                value:function (treePanelNode){
-                    if(treePanelNode){
-                        if(!treePanelNode.title){
-                            treePanelNode.title = 'New tab';
+        aContainerElements.forEach(function(el){
+            let containerDiv = el;
+        
+            Object.defineProperties(containerDiv, {
+                model:{
+                    get:function model() {
+                        return this.tabModel;
+                    },
+                    set:function model(m) {
+                        this.tabModel = m;
+                        drawTree.call(this);
+                    },
+                    enumerable:true
+                },
+
+                addTab:{
+                    value:function (treePanelNode){
+                        if(treePanelNode){
+                            if(!treePanelNode.title){
+                                treePanelNode.title = 'New tab';
+                            }
+
+                            this.tabModel.children.push(treePanelNode);
+                            addTabToMainList.apply(this, arguments);
                         }
 
-                        this.tabModel.children.push(treePanelNode);
-                        addTabToMainList.apply(this, arguments);
+                        return this;
                     }
-
-                    return this;
                 }
-            }
+            });
+            init.apply(containerDiv);
         });
-        init.apply(containerDiv);
-    });
+        
+        return aContainerElements;
+    }
+
+    return {
+        createTabElement:createTabElement
+    };
 
     function init(){
         createShadowRoot.call(this);
